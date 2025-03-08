@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa com OpenStreetMap</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        #saveButton {
+            position: absolute;
+            top: 85px;
+            left: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<button id="saveButton">Salvar Pinos</button>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    let map = L.map('map').setView([-28.4713, -49.0144], 13); // Tubarão-SC
+
+    // Adiciona a camada de tile do OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Array para armazenar os marcadores
+    let markers = [];
+
+    // Evento de clique no mapa para adicionar marcador
+    map.on('click', function(e) {
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
+
+        let marker = L.marker([lat, lng]).addTo(map)
+            .bindPopup(`Latitude: ${lat.toFixed(5)}<br>Longitude: ${lng.toFixed(5)}`)
+            .openPopup();
+
+        markers.push({ lat, lng });
+
+        // Remove o marcador ao clicar sobre ele
+        marker.on('click', function() {
+            map.removeLayer(marker); // Remove o marcador do mapa
+            markers = markers.filter(m => m.lat !== lat || m.lng !== lng); // Remove do array
+        });
+    });
+
+    // Função para salvar os pontos no backend
+    document.getElementById('saveButton').addEventListener('click', function() {
+        // Verifica se há marcadores para salvar
+        if (markers.length > 0) {
+            // Envia os dados para o backend via fetch (POST)
+            fetch('/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(markers)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Pinos salvos com sucesso!');
+                console.log(data);
+            })
+            .catch(error => {
+                alert('Erro ao salvar os pinos!');
+                console.error(error);
+            });
+        } else {
+            alert('Nenhum pino para salvar!');
+        }
+    });
+</script>
+
+</body>
+</html>
