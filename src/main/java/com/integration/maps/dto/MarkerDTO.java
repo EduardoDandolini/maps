@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class MarkerDTO {
 
-    private Double latitude;
-    private Double longitude;
+    private Double lat;
+    private Double lng;
 }

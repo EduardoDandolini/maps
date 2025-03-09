@@ -26,7 +26,7 @@
 <body>
 
 <div id="map"></div>
-<button id="saveButton">Salvar Pinos</button>
+<button id="saveButton">Salvar Localização</button>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
@@ -70,13 +70,13 @@
                 },
                 body: JSON.stringify(markers)
             })
-            .then(response => response.json())
+            .then(response => response.text())
             .then(data => {
-                alert('Pinos salvos com sucesso!');
+                alert('Registros salvos com sucesso!');
                 console.log(data);
             })
             .catch(error => {
-                alert('Erro ao salvar os pinos!');
+                alert('Erro ao salvar os registros!');
                 console.error(error);
             });
         } else {

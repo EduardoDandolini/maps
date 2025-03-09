@@ -28,7 +28,7 @@ public class MapsController {
     @PostMapping("/save")
     public String save(@RequestBody List<MarkerDTO> markers) {
         for (MarkerDTO marker : markers) {
-            Point point = geometryFactory.createPoint(new org.locationtech.jts.geom.Coordinate(marker.getLongitude(), marker.getLatitude()));
+            Point point = geometryFactory.createPoint(new org.locationtech.jts.geom.Coordinate(marker.getLat(), marker.getLng()));
             Location location = new Location();
             location.setLocation(point);
             repository.save(location);
